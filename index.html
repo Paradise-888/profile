@@ -71,16 +71,48 @@
             height: 150px;
             border-radius: 50%;
             overflow: hidden;
-            margin-bottom: 20px;
+            margin-bottom: 12px;
             border: 4px solid #ffffff;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             background: #cbd5e1;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.2s, filter 0.2s;
+        }
+
+        .profile-img-container:hover {
+            transform: scale(1.03);
+            filter: brightness(0.9);
+        }
+
+        .profile-img-container::after {
+            content: "เปลี่ยนรูป";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            font-size: 0.75rem;
+            padding: 4px 0;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .profile-img-container:hover::after {
+            opacity: 1;
         }
 
         .profile-img-container img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+        }
+
+        .upload-hint {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 16px;
         }
 
         .sidebar h1 {
@@ -243,7 +275,10 @@
                 box-shadow: none;
                 border: none;
             }
-            .print-btn {
+            .print-btn, .upload-hint {
+                display: none;
+            }
+            .profile-img-container::after {
                 display: none;
             }
         }
@@ -254,10 +289,15 @@
     <div class="resume-container">
         <!-- Sidebar: ข้อมูลส่วนตัว / ช่องทางติดต่อ / ทักษะ -->
         <aside class="sidebar">
-            <div class="profile-img-container">
-                <!-- ดึงรูป 1.png จาก GitHub โดยใช้ Relative Path (หากไฟล์ HTML และ 1.png อยู่ในโฟลเดอร์เดียวกัน) -->
-                <img src="1.png" alt="รูปโปรไฟล์ นายอติราช ทองภักดี">
+            <!-- ซ่อน Input สำหรับเลือกไฟล์รูปภาพ -->
+            <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="previewImage(event)">
+
+            <!-- คลิกที่กรอบรูปเพื่อเปลี่ยนรูปได้ทันที -->
+            <div class="profile-img-container" onclick="document.getElementById('imageInput').click()" title="คลิกเพื่อเปลี่ยนรูปภาพ">
+                <img id="profileImage" src="1.png" alt="รูปโปรไฟล์ นายอติราช ทองภักดี" onerror="this.src='https://via.placeholder.com/150?text=Upload+Photo'">
             </div>
+            <div class="upload-hint">(คลิกที่รูปเพื่อเปลี่ยนภาพ)</div>
+
             <h1>นายอติราช ทองภักดี</h1>
             <p class="subtitle">นักศึกษาฝึกงาน / ด้านไอที</p>
 
@@ -341,5 +381,18 @@
         </main>
     </div>
 
+    <!-- Script สำหรับอัปโหลดและเปลี่ยนรูปภาพแบบทันที -->
+    <script>
+        function previewImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('profileImage').src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+    </script>
 </body>
 </html>
